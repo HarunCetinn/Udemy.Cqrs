@@ -1,12 +1,12 @@
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Udemy.Cqrs.CQRS.Handler;
+using Udemy.Cqrs.CQRS.Handlers;
+using Udemy.Cqrs.Data;
 
 namespace Udemy.Cqrs
 {
@@ -16,7 +16,24 @@ namespace Udemy.Cqrs
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+
+            services.AddDbContext<StudentContext>(opt =>
+            {
+                opt.UseSqlServer("server =(localdb)\\mssqllocaldb; database=StudentDb; integrated security=true;");
+            });
+
+            //services.AddScoped<GetStudentByIdQueryHandler>();
+            //services.AddScoped<GetStudentsQueryHandler>();
+            //services.AddScoped<CreateStudentCommandHandler>();
+            //services.AddScoped<RemoveStudentCommandHandler>();
+            //services.AddScoped<UpdateStudentCommandHandler>();
+            services.AddMediatR(typeof(Startup));
+
+            services.AddControllers().AddNewtonsoftJson(opt =>
+            {
+                opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
+
 
 
         }
